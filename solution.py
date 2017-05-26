@@ -25,6 +25,8 @@ def assign_value(values, box, value):
     """
     Please use this function to update your values dictionary!
     Assigns a value to a given box. If it updates the board record it.
+    This is necessary to be done only when you want to display the game by Pygame.
+    https://discussions.udacity.com/t/pygame-visualization/221951/2
     """
 
     # Don't waste memory appending actions that don't actually change any values
@@ -66,7 +68,8 @@ def naked_twins(values):
                         # If any value in naked twins is found, remove it from the box  
                         if tv in pv:
                             #print('Removing ', tv, ' from ', pk)
-                            values[pk] = pv.replace(tv,'')
+                            #values[pk] = pv.replace(tv,'')
+                            assign_value(values, pk, pv.replace(tv,''))
     return values
 
 def grid_values(grid):
@@ -113,7 +116,8 @@ def eliminate(values):
         for pkey in target_peers:
             #print('replacing key:', pkey)
             # Remove assigned value from peers
-            values[pkey] = values[pkey].replace(value,'')
+            #values[pkey] = values[pkey].replace(value,'')
+            assign_value(values, pkey, values[pkey].replace(value,''))
     
     #print(values)
     return values
@@ -127,7 +131,8 @@ def only_choice(values):
             #print('target_keys=', target_keys)
             # If any value is found in only box in the same unit, set the value to the box 
             if len(target_keys) == 1:
-                values[target_keys[0]] = digit
+                #values[target_keys[0]] = digit
+                assign_value(values, target_keys[0], digit)
     return values
 
 def reduce_puzzle(values):
