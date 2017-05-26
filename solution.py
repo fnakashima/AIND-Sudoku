@@ -1,4 +1,6 @@
 assignments = []
+is_diagonal = False
+
 def cross(A, B):
     "Cross product of elements in A and elements in B."
     return [s+t for s in A for t in B]
@@ -16,10 +18,9 @@ diagonal1 = [rows[i]+cols[i] for i in range(9)]
 diagonal2 = [rows[i]+cols[8-i] for i in range(9)]
 diagonal_units = [diagonal1, diagonal2]
 
-unitlist = row_units + column_units + square_units + diagonal_units
+unitlist = (row_units + column_units + square_units + diagonal_units) if is_diagonal else (row_units + column_units + square_units)
 units = dict((s, [u for u in unitlist if s in u]) for s in boxes)
 peers = dict((s, set(sum(units[s],[]))-set([s])) for s in boxes)
-
 
 def assign_value(values, box, value):
     """
@@ -72,7 +73,7 @@ def naked_twins(values):
                             assign_value(values, pk, pv.replace(tv,''))
     return values
 
-def grid_values(grid):
+def grid_values(grid, withSpace = False):
     """
     Convert grid into a dict of {square: char} with '123456789' for empties.
     Args:
@@ -83,7 +84,9 @@ def grid_values(grid):
             Values: The value in each box, e.g., '8'. If the box has no value, then the value will be '123456789'.
     """
     keys = cross(rows, cols)
-    values = [box if box != '.' else '123456789' for box in grid ]
+    unsolved_value = '123456789'
+    if withSpace: unsolved_value = ' '
+    values = [box if box != '.' else unsolved_value for box in grid ]
     return dict(zip(keys, values))
 
 def display(values):
@@ -201,8 +204,21 @@ def solve(grid):
     return search(values)
 
 if __name__ == '__main__':
-    diag_sudoku_grid = '2.............62....1....7...6..8...3...9...7...6..4...4....8....52.............3'
-    display(solve(diag_sudoku_grid))
+    """
+    If it is diagonal sudoku, change is_diagonal flat to True in the top of this file.
+    """ 
+    #diag_sudoku_grid = '2.............62....1....7...6..8...3...9...7...6..4...4....8....52.............3'
+    diag_sudoku_grid = '.2.6..9.7.......838...75....1...78.67.......19.84...3....96...558.......4.9..3.1.'
+
+    print('[Assignment]')
+    display(grid_values(diag_sudoku_grid, True))
+    print(' ')
+    print('Are you ready?')
+    input("Press Enter to continue...")
+    solved_sudoku = solve(diag_sudoku_grid)
+    print(' ')
+    print('[Answer]')
+    display(solved_sudoku)
 
     try:
         from visualize import visualize_assignments
